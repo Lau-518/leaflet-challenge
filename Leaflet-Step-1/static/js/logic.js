@@ -59,4 +59,24 @@ d3.json(queryUrl).then(function (data) {
       collapsed: false,
     })
     .addTo(myMap);
+
+  // Loop through the earthquakes array and create one marker for each city object
+  for (var i = 0; i < earthquakes.length; i++) {
+    L.circle(earthquakes[i].geometry.coordinates, {
+      fillOpacity: 0.75,
+      color: "white",
+      fillColor: "purple",
+      // Setting our circle's radius equal to the output of our markerSize function
+      // This will make our marker's size proportionate to its population
+      radius: markerSize(earthquakes[i].mag),
+    })
+      .bindPopup(
+        "<h1>" +
+          earthquakes[i].place +
+          "</h1> <hr> <h3>Population: " +
+          earthquakes[i].mag +
+          "</h3>"
+      )
+      .addTo(myMap);
+  }
 });
