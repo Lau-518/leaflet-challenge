@@ -24,7 +24,7 @@ Created a map using Leaflet that plots all of the earthquakes from the dataset b
 The final visualisation is presented below
 <hr>
 
-![images/final_viz.png](images/final_viz.png)
+![images/final_viz.PNG](images/final_viz.PNG)
 
 
 <br>
