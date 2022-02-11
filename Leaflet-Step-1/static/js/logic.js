@@ -2,14 +2,29 @@
 var queryUrl =
   "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson";
 
+// Define a markerSize function that will give each earthquakes a different radius based on its magnitude
+function markerSize(mag) {
+  return mag * 30000;
+}
 // Perform a GET request to the query URL
 d3.json(queryUrl).then(function (data) {
-  // Create a GeoJSON layer containing the features array on the earthquakeData object
-  // Run the onEachFeature function once for each piece of data in the array
-  var earthquakes = L.geoJSON(data.features);
+  earthquakes = data.features;
 
-  // Define streetmap and darkmap layers
-  var streetmap = L.tileLayer(
+  //   console.log(earthquakes);
+  console.log(earthquakes[0].properties.mag);
+  //   console.log(data.features[0].properties.mag);
+
+  // Creating our initial map object
+  // We set the longitude, latitude, and the starting zoom level
+  // This gets inserted into the div with an id of 'map'
+  var myMap = L.map("map", {
+    center: [39.09, -111.09],
+    zoom: 5,
+  });
+
+  // Adding a tile layer (the background map image) to our map
+  // We use the addTo method to add objects to our map
+  L.tileLayer(
     "https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}",
     {
       attribution:
@@ -17,66 +32,21 @@ d3.json(queryUrl).then(function (data) {
       tileSize: 512,
       maxZoom: 18,
       zoomOffset: -1,
-      id: "mapbox/streets-v11",
+      id: "mapbox/light-v10",
+      // id: "mapbox/satellite-v9",
       accessToken: API_KEY,
     }
-  );
+  ).addTo(myMap);
 
-  var darkmap = L.tileLayer(
-    "https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}",
-    {
-      attribution:
-        'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-      maxZoom: 18,
-      id: "dark-v10",
-      accessToken: API_KEY,
-    }
-  );
-
-  // Define a baseMaps object to hold our base layers
-  var baseMaps = {
-    "Street Map": streetmap,
-    "Dark Map": darkmap,
-  };
-
-  // Create overlay object to hold our overlay layer
-  var overlayMaps = {
-    Earthquakes: earthquakes,
-  };
-
-  // Create our map, giving it the streetmap and earthquakes layers to display on load
-  var myMap = L.map("map", {
-    center: [37.09, -95.71],
-    zoom: 5,
-    layers: [streetmap, earthquakes],
-  });
-
-  // Create a layer control
-  // Pass in our baseMaps and overlayMaps
-  // Add the layer control to the map
-  L.control
-    .layers(baseMaps, overlayMaps, {
-      collapsed: false,
-    })
-    .addTo(myMap);
-
-  // Loop through the earthquakes array and create one marker for each city object
+  // Loop through the earthquakes array and create one marker for each earthquake object
   for (var i = 0; i < earthquakes.length; i++) {
-    L.circle(earthquakes[i].geometry.coordinates, {
+    L.circle(earthquakes[i].properties.mag, {
       fillOpacity: 0.75,
       color: "white",
       fillColor: "purple",
       // Setting our circle's radius equal to the output of our markerSize function
-      // This will make our marker's size proportionate to its population
-      radius: markerSize(earthquakes[i].mag),
-    })
-      .bindPopup(
-        "<h1>" +
-          earthquakes[i].place +
-          "</h1> <hr> <h3>Population: " +
-          earthquakes[i].mag +
-          "</h3>"
-      )
-      .addTo(myMap);
+      // This will make our marker's size proportionate to its magnitude
+      radius: markerSize(earthquakes[i].properties.mag),
+    }).addTo(myMap);
   }
 });
