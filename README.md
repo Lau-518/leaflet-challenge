@@ -1,4 +1,4 @@
-# **Visualising Eathquakes using Leaflet**
+# **Visualising Earthquakes using Leaflet**
 
 **Level 1: Basic Visualisation**
 
