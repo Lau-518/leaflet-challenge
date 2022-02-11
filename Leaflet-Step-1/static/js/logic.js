@@ -11,7 +11,7 @@ d3.json(queryUrl).then(function (data) {
   earthquakes = data.features;
 
   //   console.log(earthquakes);
-  console.log(earthquakes[0].properties.mag);
+  console.log(earthquakes[0].geometry.coordinates);
   //   console.log(data.features[0].properties.mag);
 
   // Creating our initial map object
@@ -40,7 +40,7 @@ d3.json(queryUrl).then(function (data) {
 
   // Loop through the earthquakes array and create one marker for each earthquake object
   for (var i = 0; i < earthquakes.length; i++) {
-    L.circle(earthquakes[i].properties.mag, {
+    L.circle(earthquakes[i].geometry.coordinates, {
       fillOpacity: 0.75,
       color: "white",
       fillColor: "purple",
